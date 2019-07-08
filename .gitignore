@@ -1,0 +1,8 @@
+config/*
+!config/default.json
+
+node_modules
+
+park/*
+
+.vscode
