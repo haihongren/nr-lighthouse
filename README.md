@@ -1,6 +1,6 @@
 # nr-lighthouse
 
-A basic integration to publish Google Lighthouse reports into Insights.
+A basic integration to [publish Google Lighthouse reports into Insights](https://newrelic.jiveon.com/people/aolsen@newrelic.com/blog/2019/07/08/integrate-lighthouse-reports-into-new-relic).
 
 ## Pre-requisites
 
