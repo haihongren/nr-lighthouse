@@ -1,0 +1,35 @@
+{
+  "accountId": "myid",
+  "insertKey": "mykey",
+  "urls": [
+    {"url": "https://www.google.com", 
+      "categories": ["performance","accessibility"], 
+      "audits": [
+      "first-meaningful-paint","speed-index-metric","estimated-input-latency","first-interactive","consistently-interactive",
+      "aria-allowed-attr","aria-required-attr","aria-required-children","accessibility/aria-required-parent","aria-roles","aria-valid-attr-value","aria-valid-attr","audio-caption","button-name","color-contrast"
+      ]
+    },
+    "https://www.newrelic.com",
+    {
+      "url": "https://www.cnn.com",
+      "categories": ["performance"]
+    },
+    {
+      "url": "https://www.aircanada.com",
+      "categories": ["performance","accessibility","seo"],
+      "audits": [
+        "first-meaningful-paint","speed-index-metric","estimated-input-latency","first-interactive","consistently-interactive",
+        "aria-allowed-attr","aria-required-attr","aria-required-children","accessibility/aria-required-parent","aria-roles","aria-valid-attr-value","aria-valid-attr","audio-caption","button-name","color-contrast",
+        "seo/meta-description",
+        "seo/font-size",
+        "seo/link-text",
+        "seo/is-crawlable",
+        "seo/robots-txt",
+        "seo/tap-targets",
+        "seo/hreflang",
+        "seo/plugins"
+        ]
+      }
+    ],
+  "categories": ["performance","accessibility","best-practices","seo"]
+}
