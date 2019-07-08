@@ -9,7 +9,7 @@ A basic integration to [publish Google Lighthouse reports into Insights](https:/
 
 ## Configuration
 
-The [config](https://www.npmjs.com/package/config) node package is used to manage configuration for the app. Config files must reside in the config directory. See config/examples.json.
+The [config](https://www.npmjs.com/package/config) node package is used to manage configuration for the app. Config files must reside in the config directory. See config/example.json.
 
 * `accountId` The target New Relic account for Insights publication. Mandatory.
 * `insertKey` The Insights insert key. Mandatory.
