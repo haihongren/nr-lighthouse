@@ -3,7 +3,7 @@ const chromeLauncher = require('chrome-launcher');
 const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 const config = require('config');
-
+const constants = require('./constants.js');
 /* Class representing an instance of a lighthouse report */
 class LighthouseRun {
   constructor(summary) {
@@ -32,7 +32,8 @@ class LighthouseRun {
       displayValue: audit.displayValue,
       numericValue: audit.numericValue,
       score: audit.score,
-    }
+      deviceType: this.summary.deviceType
+    };
 
     this.details.push(detail);
   }
@@ -54,19 +55,19 @@ class LighthouseRun {
 
 /* Publish report results to Insights */
 const publish = async(lighthouseRuns) => {
-  
+
   console.log('publishing runs to Insights');
-  
+
   let events = [];
   lighthouseRuns.forEach((run) => {
     events = events.concat(run.getAsEvents());
   });
-  
+
   let url = `https://insights-collector.newrelic.com/v1/accounts/${config.get('accountId')}/events`;
   let axiosConfig = {
     headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-Insert-Key': config.get('insertKey'),
+      'Content-Type': 'application/json;charset=UTF-8',
+      'X-Insert-Key': config.get('insertKey'),
     }
   };
 
@@ -81,6 +82,7 @@ const publish = async(lighthouseRuns) => {
 const launchChromeAndRunLighthouse = async(url, opts, config = null) => {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
     opts.port = chrome.port;
+    console.log("hhere0:",opts)
     return lighthouse(url, opts, config).then(results => {
       // use results.lhr for the JS-consumeable output
       // use results.report for the HTML/JSON/CSV output as a string
@@ -99,19 +101,20 @@ const setFlags = (urlDefs) => {
   if (urlDefs.audits) {
     flags.onlyAudits = urlDefs.audits;
   }
-
+ 
   return flags;
 }
 
 /* Generate Lighthouse report for a specific URL */
-const runForUrl = async(urlDefs) => {
+const runForUrl = async(urlDefs, strategy) => {
   const runs = [];
   
-  console.log(`running lighthouse report for ${urlDefs.url}`);
-
+  console.log(`running lighthouse report for ${urlDefs.url}, strategy: ${strategy}`);
   const flags = setFlags(urlDefs);
-  
-  const results = await launchChromeAndRunLighthouse(urlDefs.url, flags);
+  const devflags={...flags,...constants.deviceType[strategy]}
+ 
+  // flags.strategy = strategy;
+  const results = await launchChromeAndRunLighthouse(urlDefs.url, devflags);
 
   const runId = uuidv4();
   const timestamp = results.fetchTime;
@@ -135,6 +138,7 @@ const runForUrl = async(urlDefs) => {
       categoryId: category.id,
       title: category.title,
       score: category.score,
+      deviceType: strategy
     });
 
     category.auditRefs.forEach((ref) => {
@@ -194,8 +198,11 @@ const run = async() => {
   const urlDefs = parseUrlDefinitions();
 
   for (let config of urlDefs) {
-    await runForUrl(config).then((results) => runs = runs.concat(results));
-  };
+    const deviceTypes = ['mobile', 'desktop'];
+    for (let strategy of deviceTypes ) {
+      await runForUrl(config,strategy).then((results) => (runs = runs.concat(results)));
+    }
+  }
 
   const publishResult = await publish(runs);
 
